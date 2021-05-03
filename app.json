@@ -1,0 +1,24 @@
+{
+  "name": "MTC",
+  "displayName": "MTC",
+  "description": "MTC",
+  "slug": "MTCAppRN",
+  "privacy": "unlisted",
+  "platforms": [
+    "ios",
+    "android",
+    "web"
+  ],
+  "version": "1.0.0",
+  "releaseChannel": "dev",
+  "orientation": "portrait",
+  "permissions": [
+    "ACCESS_COARSE_LOCATION",
+    "ACCESS_FINE_LOCATION",
+    "CAMERA",
+    "INTERNET",
+    "READ_EXTERNAL_STORAGE",
+    "VIBRATE",
+    "WRITE_EXTERNAL_STORAGE"
+  ]
+}
