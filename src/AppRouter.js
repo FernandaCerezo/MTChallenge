@@ -1,31 +1,77 @@
 import React, { useState } from 'react';
-import { Dimensions, StyleSheet, Text, View, TextInput } from 'react-native';
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import icon from '../assets/images/open_book.png';
+import { CustomInputText } from '../src/components/common/CustomInputText';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   mainContainer: {
-    alignItems: 'center',
-    display: 'flex',
+    backgroundColor: '#a5d6a7',
     flex: 1,
-    height: windowHeight,
-    justifyContent: 'flex-start',
-    width: windowWidth,
-    fontFamily: 'sans-serif',
+    fontFamily: 'Roboto',
+    fontWeight: 'normal',
+    position: 'relative',
   },
   textTitle: {
-    color: 'black',
+    alignSelf: 'center',
+    color: 'white',
     fontSize: 40,
     fontWeight: 'bold',
-    paddingTop: 70,
+    marginBottom: 30,
+    position: 'relative',
+    top: '16%',
   },
-  textInput: {
-    borderColor: 'gray',
-    borderBottomWidth: 1,
-    color: 'black',
-    fontSize: 18,
-    width: 300,
+  formContent: {
+    alignSelf: 'center',
+    backgroundColor: '#FFFFFF',
+    borderTopEndRadius: 60,
+    borderTopStartRadius: 60,
+    height: windowHeight,
+    padding: 40,
+    top: '25%',
+    width: windowWidth,
+  },
+  middleContainer: {
+    backgroundColor: 'transparent',
+    flex: 1,
+    height: windowHeight,
+    position: 'absolute',
+    width: windowWidth,
+    zIndex: 2,
+  },
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#75a478',
+    borderRadius: 20,
+    padding: 10,
+  },
+  tinyIcon: {
+    alignSelf: 'center',
+    height: 75,
+    justifyContent: 'center',
+    top: '14%',
+    width: 75,
+  },
+  styleContainers: {
+    paddingTop: 65,
+    backgroundColor: 'transparent',
+  },
+  whiteText: {
+    color: 'white',
+    fontSize: 17,
+  },
+  greenText: {
+    color: '#75a478',
   },
 });
 
@@ -41,24 +87,41 @@ const AppRouter = () => {
 
   return (
     <View style={styles.mainContainer}>
-      <View>
+      <View style={styles.topContainer} />
+
+      <View style={styles.middleContainer}>
+        <Image source={icon} style={styles.tinyIcon} />
+
         <Text style={styles.textTitle}>Please sign in.</Text>
-      </View>
-      <View>
-        <TextInput
-          style={styles.textInput}
-          onChangeText={onChangeEmail}
-          value={email}
-          placeholder="user@user.com"
-          keyboardType="email-address"
-        />
-        <TextInput
-          style={styles.textInput}
-          onChangeText={onChangePassword}
-          value={password}
-          placeholder="password"
-          secureTextEntry
-        />
+
+        <View style={styles.formContent}>
+          <CustomInputText
+            onChangeInputText={onChangeEmail}
+            inputValue={email}
+            placeholder="user@email.com"
+            keyboardType="email-address"
+          />
+
+          <CustomInputText
+            onChangeInputText={onChangePassword}
+            inputValue={password}
+            placeholder="password"
+            secureTextEntry
+          />
+
+          <View style={styles.styleContainers}>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.whiteText}>Sign in</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.styleContainers}>
+            <Text style={styles.greenText}>Forgot your password?</Text>
+            <Text style={styles.greenText}>
+              Don't have an account? Create one now.
+            </Text>
+          </View>
+        </View>
       </View>
     </View>
   );
