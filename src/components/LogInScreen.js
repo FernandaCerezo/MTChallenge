@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const LogInScreen = () => {
+const LogInScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -82,6 +82,8 @@ const LogInScreen = () => {
 
   const onPressButton = () => {
     firebase.firestore().collection('users');
+    console.log(firebase.firestore().collection('Users').get());
+    navigation.navigate('Home');
   };
 
   return (
