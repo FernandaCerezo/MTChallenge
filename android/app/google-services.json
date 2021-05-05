@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "408282520618",
+    "project_id": "mtchallenge-44723",
+    "storage_bucket": "mtchallenge-44723.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:408282520618:android:3f0e54b87050d3d249f753",
+        "android_client_info": {
+          "package_name": "com.mtc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "408282520618-vj41tnmusvf7ud426je1entoh3ehq26e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAV7kQQ00xieYhRda9BVyzeNY4iOyEX-7k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "408282520618-vj41tnmusvf7ud426je1entoh3ehq26e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

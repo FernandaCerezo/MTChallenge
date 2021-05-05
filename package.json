@@ -4,12 +4,14 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
+    "clean": "cd android && ./gradlew",
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint ."
   },
   "dependencies": {
+    "firebase": "^8.4.3",
     "react": "17.0.1",
     "react-native": "0.64.0",
     "react-redux": "^7.2.4",
