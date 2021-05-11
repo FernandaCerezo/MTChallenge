@@ -11,13 +11,11 @@ const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   mainContainer: {
-    backgroundColor: '#a5d6a7',
     flex: 1,
     fontFamily: 'Roboto',
     fontWeight: 'normal',
     maxHeight: windowHeight,
     maxWidth: windowWidth,
-    position: 'relative',
   },
 });
 
@@ -29,11 +27,15 @@ function HomeScreen() {
   );
 }
 
+const navigatorOptions = {
+  headerShown: false,
+};
+
 const AppRouter = () => {
   return (
     <NavigationContainer>
       <View style={styles.mainContainer}>
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={navigatorOptions}>
           <Stack.Screen name="Login" component={LogInScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
         </Stack.Navigator>

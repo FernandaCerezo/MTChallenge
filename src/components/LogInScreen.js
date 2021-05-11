@@ -7,22 +7,19 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import icon from '../../assets/images/open_book.png';
+import icon from '../../assets/images/dog_collar.png';
 import { CustomInputText } from '../components/common/CustomInputText';
-import { firebase } from '../firebase/config';
+import { Auth } from 'aws-amplify';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
-  textTitle: {
-    alignSelf: 'center',
-    color: 'white',
-    fontSize: 40,
-    fontWeight: 'bold',
-    marginBottom: 30,
-    position: 'relative',
-    top: '16%',
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#75a478',
+    borderRadius: 20,
+    padding: 10,
   },
   formContent: {
     alignSelf: 'center',
@@ -34,19 +31,30 @@ const styles = StyleSheet.create({
     top: '25%',
     width: windowWidth,
   },
-  middleContainer: {
-    backgroundColor: 'transparent',
-    flex: 1,
-    height: windowHeight,
-    position: 'absolute',
-    width: windowWidth,
-    zIndex: 2,
+  greenText: {
+    color: '#75a478',
   },
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#75a478',
-    borderRadius: 20,
-    padding: 10,
+  mainContainer: {
+    backgroundColor: '#a5d6a7',
+    flex: 1,
+    fontFamily: 'Roboto',
+    fontWeight: 'normal',
+    height: windowHeight,
+    position: 'relative',
+    width: windowWidth,
+  },
+  styleContainers: {
+    paddingTop: 65,
+    backgroundColor: 'transparent',
+  },
+  textTitle: {
+    alignSelf: 'center',
+    color: 'white',
+    fontSize: 40,
+    fontWeight: 'bold',
+    marginBottom: 30,
+    position: 'relative',
+    top: '16%',
   },
   tinyIcon: {
     alignSelf: 'center',
@@ -55,16 +63,17 @@ const styles = StyleSheet.create({
     top: '14%',
     width: 75,
   },
-  styleContainers: {
-    paddingTop: 65,
+  topContainer: {
     backgroundColor: 'transparent',
+    flex: 1,
+    height: 600,
+    position: 'absolute',
+    width: windowWidth,
+    zIndex: 2,
   },
   whiteText: {
     color: 'white',
     fontSize: 17,
-  },
-  greenText: {
-    color: '#75a478',
   },
 });
 
@@ -80,17 +89,24 @@ const LogInScreen = ({ navigation }) => {
     setPassword(passwordValue);
   };
 
-  const onPressButton = () => {
-    firebase.firestore().collection('users');
-    console.log(firebase.firestore().collection('Users').get());
-    navigation.navigate('Home');
+  const onPressButton = async () => {
+    try {
+      await Auth.signUp({
+        username: email,
+        password,
+        attributes: {
+          email,
+        },
+      });
+      navigation.navigate('Home');
+    } catch (error) {
+      console.log('error signing up:', error);
+    }
   };
 
   return (
-    <>
-      <View style={styles.topContainer} />
-
-      <View style={styles.middleContainer}>
+    <View style={styles.mainContainer}>
+      <View style={styles.topContainer}>
         <Image source={icon} style={styles.tinyIcon} />
 
         <Text style={styles.textTitle}>Please sign in.</Text>
@@ -125,7 +141,7 @@ const LogInScreen = ({ navigation }) => {
           </View>
         </View>
       </View>
-    </>
+    </View>
   );
 };
 
