@@ -1,28 +1,22 @@
 import React, { useState } from 'react';
 import {
   Dimensions,
-  Image,
+  View,
   StyleSheet,
   Text,
-  View,
   TouchableOpacity,
 } from 'react-native';
-import icon from '../../assets/images/dog_collar.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { CustomInputText } from '../components/common/CustomInputText';
 import { CustomLargeButton } from '../components/common/CustomLargeButton';
-import { RegisterScreen } from '../components/RegisterScreen';
-import { showRegisterScreenChanged } from '../actions';
+import { showConfirmCodeChanged, showRegisterScreenChanged } from '../actions';
 import { Auth } from 'aws-amplify';
+import { ConfirmCode } from './ConfirmCode';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
-  bottomStyleContainers: {
-    marginTop: 40,
-    backgroundColor: 'transparent',
-  },
   formContent: {
     alignSelf: 'center',
     backgroundColor: '#FFFFFF',
@@ -30,16 +24,11 @@ const styles = StyleSheet.create({
     borderTopStartRadius: 60,
     height: windowHeight,
     padding: 40,
-    top: '40%',
+    top: '35%',
     width: windowWidth,
   },
   greenText: {
     color: '#75a478',
-  },
-  linkText: {
-    height: 30,
-    marginVertical: 5,
-    width: 300,
   },
   mainContainer: {
     backgroundColor: '#a5d6a7',
@@ -51,40 +40,21 @@ const styles = StyleSheet.create({
     width: windowWidth,
   },
   styleContainers: {
-    paddingTop: 65,
+    paddingTop: 55,
     backgroundColor: 'transparent',
-  },
-  textTitle: {
-    alignSelf: 'center',
-    color: 'white',
-    fontSize: 40,
-    fontWeight: 'bold',
-    marginBottom: 30,
-    position: 'relative',
-    top: '30%',
-  },
-  tinyIcon: {
-    alignSelf: 'center',
-    height: 75,
-    justifyContent: 'center',
-    top: '25%',
-    width: 75,
-  },
-  topContainer: {
-    backgroundColor: 'transparent',
-    flex: 1,
-    height: 250,
-    position: 'absolute',
-    width: windowWidth,
-    zIndex: 2,
   },
 });
 
-const LogInScreen = ({ navigation }) => {
+const RegisterScreen = ({ navigation }) => {
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const authStore = useSelector(state => state.auth);
+
+  const onChangeUsername = userValue => {
+    setUsername(userValue);
+  };
 
   const onChangeEmail = emailValue => {
     setEmail(emailValue);
@@ -96,32 +66,39 @@ const LogInScreen = ({ navigation }) => {
 
   const onPressButton = async () => {
     try {
-      await Auth.signIn(email, password);
-      navigation.navigate('Home');
+      const { user } = await Auth.signUp({
+        username,
+        password,
+        attributes: {
+          email,
+        },
+      });
+
+      if (user) {
+        dispatch(showConfirmCodeChanged({ isVisible: true }));
+      }
     } catch (error) {
       console.log('error signing up:', error.message);
     }
   };
 
-  const onPressRegister = () => {
-    dispatch(showRegisterScreenChanged({ isVisible: true }));
+  const onPressLogin = async () => {
+    dispatch(showRegisterScreenChanged({ isVisible: false }));
   };
+  console.log('nav =', navigation);
 
   return (
-    <View style={styles.mainContainer}>
-      <View style={styles.topContainer}>
-        <Image source={icon} style={styles.tinyIcon} />
-        <Text style={styles.textTitle}>
-          {authStore.isRegisterScreenVisible
-            ? 'Please sign up.'
-            : 'Please sign in.'}
-        </Text>
-      </View>
-
-      {authStore.isRegisterScreenVisible ? (
-        <RegisterScreen navigation={navigation} />
+    <View style={styles.formContent}>
+      {authStore.isConfirmCodeVisible ? (
+        <ConfirmCode navigation={navigation} userName={username} />
       ) : (
-        <View style={styles.formContent}>
+        <>
+          <CustomInputText
+            onChangeInputText={onChangeUsername}
+            inputValue={username}
+            placeholder="username"
+          />
+
           <CustomInputText
             onChangeInputText={onChangeEmail}
             autoCapitalize="none"
@@ -136,25 +113,17 @@ const LogInScreen = ({ navigation }) => {
             placeholder="password"
             secureTextEntry
           />
-
           <View style={styles.styleContainers} />
-          <CustomLargeButton actionPress={onPressButton} textButton="Sign in" />
-
-          <View style={styles.bottomStyleContainers}>
-            <TouchableOpacity style={styles.linkText} onPress={() => { }}>
-              <Text style={styles.greenText}>Forgot your password?</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.linkText} onPress={onPressRegister}>
-              <Text style={styles.greenText}>
-                Don't have an account? Create one now.
-              </Text>
+          <CustomLargeButton actionPress={onPressButton} textButton="Sign up" />
+          <View style={styles.styleContainers}>
+            <TouchableOpacity style={styles.greenText} onPress={onPressLogin}>
+              <Text style={styles.greenText}>Already a member? Login Now</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </>
       )}
     </View>
   );
 };
 
-export { LogInScreen };
+export { RegisterScreen };

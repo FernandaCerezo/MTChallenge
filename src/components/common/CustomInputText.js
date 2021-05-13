@@ -16,18 +16,20 @@ const styles = StyleSheet.create({
 
 const CustomInputText = ({
   onChangeInputText = () => {},
+  autoCapitalize,
   inputValue,
+  keyboardType = 'default',
   placeholder,
-  keyboardType,
   secureTextEntry = false,
 }) => {
   return (
     <TextInput
       style={styles.textInput}
-      onChangeText={onChangeInputText}
+      autoCapitalize={autoCapitalize}
       inputValue={inputValue}
-      placeholder={placeholder}
       keyboardType={keyboardType}
+      onChangeText={onChangeInputText}
+      placeholder={placeholder}
       secureTextEntry={secureTextEntry}
     />
   );
