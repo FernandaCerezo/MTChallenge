@@ -1,0 +1,12 @@
+type UserData @model @auth(rules: [{allow: private}]) {
+  id: ID!
+  name: String!
+  lastname: String!
+  username: String!
+  age: Int
+  dogname: String!
+  breed: String!
+  dogage: Int
+  description: String
+}
+ 
