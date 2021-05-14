@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CustomInputText } from '../components/common/CustomInputText';
 import { CustomLargeButton } from '../components/common/CustomLargeButton';
 import { RegisterScreen } from '../components/RegisterScreen';
-import { showRegisterScreenChanged } from '../actions';
+import { showRegisterScreenChanged, userDataLoaded } from '../actions';
 import { Auth } from 'aws-amplify';
 
 const windowWidth = Dimensions.get('window').width;
@@ -81,13 +81,13 @@ const styles = StyleSheet.create({
 });
 
 const LogInScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('');
+  const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const authStore = useSelector(state => state.auth);
 
-  const onChangeEmail = emailValue => {
-    setEmail(emailValue);
+  const onChangeUsername = userNameValue => {
+    setUserName(userNameValue);
   };
 
   const onChangePassword = passwordValue => {
@@ -96,10 +96,11 @@ const LogInScreen = ({ navigation }) => {
 
   const onPressButton = async () => {
     try {
-      await Auth.signIn(email, password);
+      dispatch(userDataLoaded({ userName }));
+      await Auth.signIn(userName, password);
       navigation.navigate('Home');
     } catch (error) {
-      console.log('error signing up:', error.message);
+      console.log('error sign up:', error.message);
     }
   };
 
@@ -123,11 +124,9 @@ const LogInScreen = ({ navigation }) => {
       ) : (
         <View style={styles.formContent}>
           <CustomInputText
-            onChangeInputText={onChangeEmail}
-            autoCapitalize="none"
-            inputValue={email}
-            keyboardType="email-address"
-            placeholder="user@email.com"
+            onChangeInputText={onChangeUsername}
+            inputValue={userName}
+            placeholder="username"
           />
 
           <CustomInputText
@@ -141,7 +140,7 @@ const LogInScreen = ({ navigation }) => {
           <CustomLargeButton actionPress={onPressButton} textButton="Sign in" />
 
           <View style={styles.bottomStyleContainers}>
-            <TouchableOpacity style={styles.linkText} onPress={() => { }}>
+            <TouchableOpacity style={styles.linkText} onPress={() => {}}>
               <Text style={styles.greenText}>Forgot your password?</Text>
             </TouchableOpacity>
 
