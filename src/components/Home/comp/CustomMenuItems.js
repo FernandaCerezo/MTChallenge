@@ -4,8 +4,9 @@ import { Image, StyleSheet, TouchableOpacity } from 'react-native';
 const styles = StyleSheet.create({
   itemContainer: {
     alignItems: 'center',
-    justifyContent: 'center',
     height: 50,
+    justifyContent: 'center',
+    paddingHorizontal: 20,
   },
   tinyImage: {
     height: 24,

@@ -5,6 +5,8 @@ import { LogInScreen } from './components/LogInScreen';
 import { Home } from './components/Home/Home';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { DogProfile } from './components/Profile/DogProfile';
+import { UserProfile } from './components/Profile/UserProfile';
 
 const Stack = createStackNavigator();
 const windowWidth = Dimensions.get('window').width;
@@ -31,6 +33,8 @@ const AppRouter = () => {
         <Stack.Navigator screenOptions={navigatorOptions}>
           <Stack.Screen name="Login" component={LogInScreen} />
           <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="DogProfile" component={DogProfile} />
+          <Stack.Screen name="UserProfile" component={UserProfile} />
         </Stack.Navigator>
       </View>
     </NavigationContainer>

@@ -85,12 +85,15 @@ const RegisterScreen = ({ navigation }) => {
   const onPressLogin = async () => {
     dispatch(showRegisterScreenChanged({ isVisible: false }));
   };
-  console.log('nav =', navigation);
 
   return (
     <View style={styles.formContent}>
       {authStore.isConfirmCodeVisible ? (
-        <ConfirmCode navigation={navigation} userName={username} />
+        <ConfirmCode
+          navigation={navigation}
+          userName={username}
+          password={password}
+        />
       ) : (
         <>
           <CustomInputText

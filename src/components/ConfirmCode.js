@@ -7,10 +7,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { showConfirmCodeChanged, userDataLoaded } from '../actions';
 import { CustomInputText } from '../components/common/CustomInputText';
 import { CustomLargeButton } from '../components/common/CustomLargeButton';
-import { showRegisterScreenChanged } from '../actions';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
@@ -46,9 +46,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const ConfirmCode = ({ navigation, userName }) => {
-  const [confirmCode, setConfirmCode] = useState('');
+const ConfirmCode = ({ navigation, userName, password }) => {
   const dispatch = useDispatch();
+  const [confirmCode, setConfirmCode] = useState('');
 
   const onChangeConfirmCode = codeValue => {
     setConfirmCode(codeValue);
@@ -57,7 +57,12 @@ const ConfirmCode = ({ navigation, userName }) => {
   const onPressButton = async () => {
     try {
       await Auth.confirmSignUp(userName, confirmCode);
+
+      const userInfo = await Auth.signIn(userName, password);
+      dispatch(userDataLoaded({ userInfo }));
+
       navigation.navigate('Home');
+      dispatch(showConfirmCodeChanged({ isVisible: false }));
     } catch (error) {
       console.log('error confirm code:', error.message);
     }
@@ -66,7 +71,6 @@ const ConfirmCode = ({ navigation, userName }) => {
   const onPressResendCode = async () => {
     try {
       await Auth.resendSignUp(userName);
-      console.log('code resent successfully');
     } catch (error) {
       console.log('result:', error);
     }

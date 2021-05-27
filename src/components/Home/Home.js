@@ -2,16 +2,22 @@ import React, { useEffect } from 'react';
 import {
   Dimensions,
   FlatList,
-  Image,
   SafeAreaView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { CustomItemList } from '../Home/comp/CustomItemList';
 import { CustomMenuItem } from '../Home/comp/CustomMenuItems';
+import { CustomOptionsCategories } from './comp/CustomOptionsCategories';
+import { LoadingScreen } from '../../components/LoadingScreen/LoadingScreen';
+import { Categories } from '../Categories/Categories';
 import { getAllBreeds } from '../../actions/auth';
+import {
+  filterPetListByCategory,
+  getPetById,
+  showCategoryScreenChanged,
+} from '../../actions/pets';
 import { useDispatch, useSelector } from 'react-redux';
 import bigSize from '../../../assets/images/big_dog.png';
 import home from '../../../assets/images/home.png';
@@ -20,125 +26,149 @@ import profile from '../../../assets/images/profile.png';
 import signOut from '../../../assets/images/sign_out.png';
 import smallSize from '../../../assets/images/small_dog.png';
 import { Auth } from 'aws-amplify';
-import { SMALL_PET_HEIGHT } from '../../constants';
+import {
+  SMALL_PET_HEIGHT,
+  MEDIUM_PET_HEIGHT,
+  BIG_PET_HEIGHT,
+} from '../../constants';
+import { SIGN_OUT_USER } from '../../actions/types';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   categoryContainer: {
-    backgroundColor: '#E1E2E1',
-    justifyContent: 'center',
-    flexDirection: 'row',
     alignItems: 'center',
-  },
-  buttonCategory: {
-    backgroundColor: '#F5F5F6',
-    borderRadius: 15,
-    elevation: 2,
-    padding: 8,
-    marginRight: 10,
-    marginLeft: 10,
-    marginTop: 10,
-    justifyContent: 'space-evenly',
+    backgroundColor: 'transparent',
     flexDirection: 'row',
+    justifyContent: 'space-evenly',
   },
   bottomContainer: {
+    backgroundColor: '#E2E2E2',
     flex: 3,
   },
   hiTextStyle: {
-    fontSize: 28,
     color: '#FFF',
+    fontSize: 35,
     fontWeight: 'bold',
   },
   mainContainer: {
-    backgroundColor: '#E1E2E1',
-    width: windowWidth,
-    height: windowHeight,
+    backgroundColor: '#4b9e84',
     fontFamily: 'Roboto',
+    height: windowHeight,
+    width: windowWidth,
   },
   mediumContainer: {
-    paddingTop: 10,
+    backgroundColor: '#E2E2E2',
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
     flex: 1,
+    paddingTop: 20,
   },
   menuContainer: {
-    flex: 1,
-    paddingHorizontal: 66,
-  },
-  optionsMenuContainer: {
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-    flexDirection: 'row',
-    backgroundColor: '#75a478',
-    borderRadius: 30,
-  },
-  rowContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 25,
-    width: '100%',
-  },
-  textButton: {
-    fontWeight: 'bold',
-    padding: 10,
-  },
-  tinyIcon: {
-    height: 35,
-    width: 35,
+    backgroundColor: 'transparent',
+    position: 'absolute',
+    bottom: 45,
     alignSelf: 'center',
   },
+  optionsMenuContainer: {
+    backgroundColor: '#4b9e84',
+    borderRadius: 30,
+    elevation: 8,
+    flexDirection: 'row',
+  },
+  rowContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    width: '100%',
+  },
   titleSections: {
-    fontWeight: 'bold',
+    color: 'black',
     fontSize: 20,
-    paddingLeft: 10,
-    color: '#585a61',
+    fontWeight: 'bold',
+    paddingLeft: 15,
   },
   topContainer: {
-    backgroundColor: '#a5d6a7',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    elevation: 3,
-    flex: 2,
+    flex: 1,
+    justifyContent: 'center',
     paddingHorizontal: 20,
-  },
-  viewSize: {
-    width: '50%',
   },
 });
 
 const Home = ({ navigation }) => {
-  const authStore = useSelector(state => state.auth);
+  const store = useSelector(state => state);
+  const { auth, pets } = store;
   const dispatch = useDispatch();
-
-  const onPressSignOut = async () => {
-    try {
-      await Auth.signOut();
-      navigation.navigate('Login');
-    } catch (error) {
-      console.log('error sign out:', error.message);
-    }
-  };
+  const { isLoading } = auth;
 
   //constructor "onCreate"
   useEffect(() => {
     dispatch(getAllBreeds());
   }, [dispatch]);
 
+  const onPressSignOut = async () => {
+    try {
+      await Auth.signOut();
+      dispatch({ type: SIGN_OUT_USER });
+      navigation.navigate('Login');
+    } catch (error) {
+      console.log('error sign out:', error.message);
+    }
+  };
+
+  const onPressProfile = () => {
+    try {
+      navigation.navigate('UserProfile');
+    } catch (error) {
+      console.log('error profile:', error.message);
+    }
+  };
+
+  const onPressButton = petId => async () => {
+    try {
+      dispatch(getPetById({ petId }));
+      navigation.navigate('DogProfile');
+    } catch (error) {
+      console.log('error:', error.message);
+    }
+  };
+
   const renderItem = ({ item }) => (
     <CustomItemList
+      actionPress={onPressButton(item.id)}
       image={item.image.url}
       title={item.name}
       description={item.bred_for}
     />
   );
 
-  return (
+  const onPressCategory = categoryName => () => {
+    if (auth.allBreeds) {
+      dispatch(
+        filterPetListByCategory({
+          category: categoryName,
+          pets: auth.allBreeds,
+        }),
+      );
+      dispatch(showCategoryScreenChanged({ isVisible: true }));
+    }
+  };
+
+  const onPressHome = () => {
+    try {
+      dispatch(showCategoryScreenChanged({ isVisible: false }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return isLoading ? (
+    <LoadingScreen />
+  ) : (
     <View style={styles.mainContainer}>
       <View style={styles.topContainer}>
         <View style={styles.rowContainer}>
-          <View style={styles.viewSize}>
-            <Text style={styles.hiTextStyle}>Hi {authStore.userName}</Text>
-          </View>
+          <Text style={styles.hiTextStyle}>Hi, {auth.userInfo.username}!</Text>
         </View>
       </View>
 
@@ -146,58 +176,46 @@ const Home = ({ navigation }) => {
         <Text style={styles.titleSections}>Size</Text>
 
         <View style={styles.categoryContainer}>
-          <TouchableOpacity
-            style={styles.buttonCategory}
-            onPress={() => {
-              authStore.allBreeds.map(pet => {
-                const { metric } = pet.height;
-                let petHeight = metric;
-
-                if (petHeight && petHeight.includes('-')) {
-                  petHeight = metric.split('-')[1];
-                }
-
-                if (petHeight < SMALL_PET_HEIGHT) {
-                  return pet;
-                }
-              });
-            }}>
-            <Image source={smallSize} style={styles.tinyIcon} />
-            <Text style={styles.textButton}> Small</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.buttonCategory}>
-            <Image source={mediumSize} style={styles.tinyIcon} />
-            <Text style={styles.textButton}>Medium</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.buttonCategory}>
-            <Image source={bigSize} style={styles.tinyIcon} />
-            <Text style={styles.textButton}>Big</Text>
-          </TouchableOpacity>
+          <CustomOptionsCategories
+            actionPress={onPressCategory(SMALL_PET_HEIGHT)}
+            image={smallSize}
+            category="Small"
+          />
+          <CustomOptionsCategories
+            actionPress={onPressCategory(MEDIUM_PET_HEIGHT)}
+            image={mediumSize}
+            category="Medium"
+          />
+          <CustomOptionsCategories
+            actionPress={onPressCategory(BIG_PET_HEIGHT)}
+            image={bigSize}
+            category="Big"
+          />
         </View>
       </View>
-
       <View style={styles.bottomContainer}>
         <Text style={styles.titleSections}>All Dogs</Text>
-
-        <SafeAreaView>
-          <FlatList
-            data={authStore.allBreeds}
-            renderItem={renderItem}
-            horizontal={true}
-            keyExtractor={item => item.id}
-          />
-        </SafeAreaView>
+        {pets.isCategoryScreenVisible ? (
+          <Categories navigation={navigation} />
+        ) : (
+          <SafeAreaView>
+            <FlatList
+              data={auth.allBreeds}
+              renderItem={renderItem}
+              horizontal={true}
+              keyExtractor={item => item.id}
+            />
+          </SafeAreaView>
+        )}
       </View>
       <View style={styles.menuContainer}>
         <View style={styles.optionsMenuContainer}>
-          <CustomMenuItem image={home} />
-          <CustomMenuItem image={profile} />
+          <CustomMenuItem actionPress={onPressHome} image={home} />
+          <CustomMenuItem actionPress={onPressProfile} image={profile} />
           <CustomMenuItem actionPress={onPressSignOut} image={signOut} />
         </View>
       </View>
-    </View >
+    </View>
   );
 };
 

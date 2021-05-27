@@ -14,6 +14,7 @@ export declare class UserData {
   readonly breed: string;
   readonly dogage?: number;
   readonly description?: string;
+  readonly clientId?: string;
   constructor(init: ModelInit<UserData>);
   static copyOf(source: UserData, mutator: (draft: MutableModel<UserData>) => MutableModel<UserData> | void): UserData;
 }

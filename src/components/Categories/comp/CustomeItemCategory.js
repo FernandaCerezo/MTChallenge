@@ -4,7 +4,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 const styles = StyleSheet.create({
   descriptionText: {
     color: '#75a478',
-    fontSize: 16,
+    fontSize: 12,
     paddingHorizontal: 10,
     paddingTop: 3,
   },
@@ -12,12 +12,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     borderRadius: 15,
     elevation: 5,
-    height: 270,
+    height: 250,
     marginBottom: 10,
     marginLeft: 20,
     marginTop: 20,
     overflow: 'hidden',
-    width: 200,
+    width: 150,
   },
   tinyImage: {
     borderTopLeftRadius: 15,
@@ -31,12 +31,12 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   titleText: {
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: 'bold',
   },
 });
 
-const CustomItemList = ({
+const CustomItemCategory = ({
   actionPress = () => {},
   image,
   title,
@@ -55,4 +55,4 @@ const CustomItemList = ({
   );
 };
 
-export { CustomItemList };
+export { CustomItemCategory };

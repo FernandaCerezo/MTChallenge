@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   Image,
@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CustomInputText } from '../components/common/CustomInputText';
 import { CustomLargeButton } from '../components/common/CustomLargeButton';
 import { RegisterScreen } from '../components/RegisterScreen';
+import { LoadingScreen } from '../components/LoadingScreen/LoadingScreen';
 import { showRegisterScreenChanged, userDataLoaded } from '../actions';
 import { Auth } from 'aws-amplify';
 
@@ -33,8 +34,8 @@ const styles = StyleSheet.create({
     top: '40%',
     width: windowWidth,
   },
-  greenText: {
-    color: '#75a478',
+  blueText: {
+    color: '#4b9e84',
   },
   linkText: {
     height: 30,
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
     width: 300,
   },
   mainContainer: {
-    backgroundColor: '#a5d6a7',
+    backgroundColor: '#4b9e84',
     flex: 1,
     fontFamily: 'Roboto',
     fontWeight: 'normal',
@@ -85,6 +86,15 @@ const LogInScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const authStore = useSelector(state => state.auth);
+  const { isLoading, isRegisterScreenVisible } = authStore;
+
+  useEffect(
+    () => () => {
+      setUserName('');
+      setPassword('');
+    },
+    [],
+  );
 
   const onChangeUsername = userNameValue => {
     setUserName(userNameValue);
@@ -96,8 +106,8 @@ const LogInScreen = ({ navigation }) => {
 
   const onPressButton = async () => {
     try {
-      dispatch(userDataLoaded({ userName }));
-      await Auth.signIn(userName, password);
+      const userInfo = await Auth.signIn(userName, password);
+      dispatch(userDataLoaded({ userInfo }));
       navigation.navigate('Home');
     } catch (error) {
       console.log('error sign up:', error.message);
@@ -108,18 +118,18 @@ const LogInScreen = ({ navigation }) => {
     dispatch(showRegisterScreenChanged({ isVisible: true }));
   };
 
-  return (
+  return isLoading ? (
+    <LoadingScreen />
+  ) : (
     <View style={styles.mainContainer}>
       <View style={styles.topContainer}>
         <Image source={icon} style={styles.tinyIcon} />
         <Text style={styles.textTitle}>
-          {authStore.isRegisterScreenVisible
-            ? 'Please sign up.'
-            : 'Please sign in.'}
+          {isRegisterScreenVisible ? 'Please sign up.' : 'Please sign in.'}
         </Text>
       </View>
 
-      {authStore.isRegisterScreenVisible ? (
+      {isRegisterScreenVisible ? (
         <RegisterScreen navigation={navigation} />
       ) : (
         <View style={styles.formContent}>
@@ -141,11 +151,11 @@ const LogInScreen = ({ navigation }) => {
 
           <View style={styles.bottomStyleContainers}>
             <TouchableOpacity style={styles.linkText} onPress={() => {}}>
-              <Text style={styles.greenText}>Forgot your password?</Text>
+              <Text style={styles.blueText}>Forgot your password?</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.linkText} onPress={onPressRegister}>
-              <Text style={styles.greenText}>
+              <Text style={styles.blueText}>
                 Don't have an account? Create one now.
               </Text>
             </TouchableOpacity>

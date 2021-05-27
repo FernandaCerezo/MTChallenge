@@ -24,9 +24,9 @@ export function showConfirmCodeChanged({ isVisible }) {
   };
 }
 
-export function userDataLoaded({ userName }) {
+export function userDataLoaded({ userInfo }) {
   return {
-    userName,
+    userInfo,
     type: USER_DATA_LOADED,
   };
 }
