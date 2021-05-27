@@ -65,6 +65,13 @@ export const schema = {
                     "type": "String",
                     "isRequired": false,
                     "attributes": []
+                },
+                "clientId": {
+                    "name": "clientId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
                 }
             },
             "syncable": true,
@@ -95,5 +102,5 @@ export const schema = {
     },
     "enums": {},
     "nonModels": {},
-    "version": "f2a295b1a80ec014ba621b05d2168f19"
+    "version": "c6922658a44bfca10fe27c596096c741"
 };

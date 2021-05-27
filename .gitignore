@@ -1,3 +1,7 @@
+#Project
+app.json
+node_modules/**/*
+src/secrets.js
 # OSX
 #
 .DS_Store

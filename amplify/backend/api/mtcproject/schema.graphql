@@ -8,5 +8,6 @@ type UserData @model @auth(rules: [{allow: private}]) {
   breed: String!
   dogage: Int
   description: String
+  clientId: ID
 }
  

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   Image,
@@ -12,7 +12,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CustomInputText } from '../components/common/CustomInputText';
 import { CustomLargeButton } from '../components/common/CustomLargeButton';
 import { RegisterScreen } from '../components/RegisterScreen';
-import { showRegisterScreenChanged } from '../actions';
+import { LoadingScreen } from '../components/LoadingScreen/LoadingScreen';
+import { showRegisterScreenChanged, userDataLoaded } from '../actions';
 import { Auth } from 'aws-amplify';
 
 const windowWidth = Dimensions.get('window').width;
@@ -33,8 +34,8 @@ const styles = StyleSheet.create({
     top: '40%',
     width: windowWidth,
   },
-  greenText: {
-    color: '#75a478',
+  blueText: {
+    color: '#4b9e84',
   },
   linkText: {
     height: 30,
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
     width: 300,
   },
   mainContainer: {
-    backgroundColor: '#a5d6a7',
+    backgroundColor: '#4b9e84',
     flex: 1,
     fontFamily: 'Roboto',
     fontWeight: 'normal',
@@ -81,13 +82,22 @@ const styles = StyleSheet.create({
 });
 
 const LogInScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('');
+  const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const authStore = useSelector(state => state.auth);
+  const { isLoading, isRegisterScreenVisible } = authStore;
 
-  const onChangeEmail = emailValue => {
-    setEmail(emailValue);
+  useEffect(
+    () => () => {
+      setUserName('');
+      setPassword('');
+    },
+    [],
+  );
+
+  const onChangeUsername = userNameValue => {
+    setUserName(userNameValue);
   };
 
   const onChangePassword = passwordValue => {
@@ -96,10 +106,11 @@ const LogInScreen = ({ navigation }) => {
 
   const onPressButton = async () => {
     try {
-      await Auth.signIn(email, password);
+      const userInfo = await Auth.signIn(userName, password);
+      dispatch(userDataLoaded({ userInfo }));
       navigation.navigate('Home');
     } catch (error) {
-      console.log('error signing up:', error.message);
+      console.log('error sign up:', error.message);
     }
   };
 
@@ -107,27 +118,25 @@ const LogInScreen = ({ navigation }) => {
     dispatch(showRegisterScreenChanged({ isVisible: true }));
   };
 
-  return (
+  return isLoading ? (
+    <LoadingScreen />
+  ) : (
     <View style={styles.mainContainer}>
       <View style={styles.topContainer}>
         <Image source={icon} style={styles.tinyIcon} />
         <Text style={styles.textTitle}>
-          {authStore.isRegisterScreenVisible
-            ? 'Please sign up.'
-            : 'Please sign in.'}
+          {isRegisterScreenVisible ? 'Please sign up.' : 'Please sign in.'}
         </Text>
       </View>
 
-      {authStore.isRegisterScreenVisible ? (
+      {isRegisterScreenVisible ? (
         <RegisterScreen navigation={navigation} />
       ) : (
         <View style={styles.formContent}>
           <CustomInputText
-            onChangeInputText={onChangeEmail}
-            autoCapitalize="none"
-            inputValue={email}
-            keyboardType="email-address"
-            placeholder="user@email.com"
+            onChangeInputText={onChangeUsername}
+            inputValue={userName}
+            placeholder="username"
           />
 
           <CustomInputText
@@ -141,12 +150,12 @@ const LogInScreen = ({ navigation }) => {
           <CustomLargeButton actionPress={onPressButton} textButton="Sign in" />
 
           <View style={styles.bottomStyleContainers}>
-            <TouchableOpacity style={styles.linkText} onPress={() => { }}>
-              <Text style={styles.greenText}>Forgot your password?</Text>
+            <TouchableOpacity style={styles.linkText} onPress={() => {}}>
+              <Text style={styles.blueText}>Forgot your password?</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.linkText} onPress={onPressRegister}>
-              <Text style={styles.greenText}>
+              <Text style={styles.blueText}>
                 Don't have an account? Create one now.
               </Text>
             </TouchableOpacity>

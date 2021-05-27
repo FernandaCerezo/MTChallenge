@@ -1,9 +1,12 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import { LogInScreen } from './components/LogInScreen';
+import { Home } from './components/Home/Home';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { DogProfile } from './components/Profile/DogProfile';
+import { UserProfile } from './components/Profile/UserProfile';
 
 const Stack = createStackNavigator();
 const windowWidth = Dimensions.get('window').width;
@@ -19,14 +22,6 @@ const styles = StyleSheet.create({
   },
 });
 
-function HomeScreen() {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Home Screen</Text>
-    </View>
-  );
-}
-
 const navigatorOptions = {
   headerShown: false,
 };
@@ -37,7 +32,9 @@ const AppRouter = () => {
       <View style={styles.mainContainer}>
         <Stack.Navigator screenOptions={navigatorOptions}>
           <Stack.Screen name="Login" component={LogInScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="DogProfile" component={DogProfile} />
+          <Stack.Screen name="UserProfile" component={UserProfile} />
         </Stack.Navigator>
       </View>
     </NavigationContainer>

@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
-    backgroundColor: '#75a478',
+    backgroundColor: '#136f57',
     borderRadius: 20,
     padding: 10,
   },
