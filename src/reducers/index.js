@@ -1,2 +1,8 @@
 import { combineReducers } from 'redux';
-export default combineReducers({});
+import AuthReducer from './auth';
+import PetsReducer from './pets';
+
+export default combineReducers({
+  auth: AuthReducer,
+  pets: PetsReducer,
+});

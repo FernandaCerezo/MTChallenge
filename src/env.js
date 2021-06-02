@@ -1,8 +1,9 @@
+//API class
 import app from '../app.json';
 
 const ENV = {
   dev: {
-    API_URL: 'https://www.etnassoft.com/api/v1/get/?id=589&callback=?',
+    API_URL: 'https://api.thedogapi.com/v1',
   },
 };
 
