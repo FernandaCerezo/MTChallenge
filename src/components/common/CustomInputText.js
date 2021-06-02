@@ -26,7 +26,7 @@ const CustomInputText = ({
     <TextInput
       style={styles.textInput}
       autoCapitalize={autoCapitalize}
-      inputValue={inputValue}
+      value={inputValue}
       keyboardType={keyboardType}
       onChangeText={onChangeInputText}
       placeholder={placeholder}

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Dimensions, StyleSheet, View, ScrollView, Text } from 'react-native';
 import { CustomItemCategory } from '../Categories/comp/CustomeItemCategory';
 import { CustomInfoUserContent } from './comp/CustomInfoUserContent';
@@ -56,7 +56,6 @@ const styles = StyleSheet.create({
 
 const UserProfile = ({ navigation }) => {
   const dispatch = useDispatch();
-  const [dataProfile, setDataProfile] = useState({});
   const store = useSelector(state => state.auth);
   const {
     allBreeds,
@@ -64,6 +63,7 @@ const UserProfile = ({ navigation }) => {
     isNewProfileScreenVisible,
     userInfo,
     userProfileUploaded,
+    userProfileInfo,
   } = store;
 
   const getUserProfile = useCallback(async () => {
@@ -77,8 +77,7 @@ const UserProfile = ({ navigation }) => {
       dispatch({ error: 'No Data Found', type: PROFILE_DATA_FAILED });
       dispatch({ isVisible: true, type: SHOW_NEW_PROFILE_SCREEN });
     } else {
-      setDataProfile(profile[0]);
-      dispatch({ type: PROFILE_DATA_LOADED });
+      dispatch({ data: profile[0], type: PROFILE_DATA_LOADED });
       dispatch({ isVisible: false, type: SHOW_NEW_PROFILE_SCREEN });
     }
   }, [dispatch, userInfo.attributes.sub]);
@@ -103,8 +102,8 @@ const UserProfile = ({ navigation }) => {
   };
 
   const renderPetDescription = () => {
-    if (dataProfile) {
-      const myPet = allBreeds.find(pet => pet.name === dataProfile.breed);
+    if (userProfileInfo) {
+      const myPet = allBreeds.find(pet => pet.name === userProfileInfo.breed);
 
       return (
         <CustomItemCategory
@@ -121,40 +120,41 @@ const UserProfile = ({ navigation }) => {
     if (isLoading) {
       return <LoadingScreen />;
     }
+    console.log('data=', userProfileInfo);
 
     return isNewProfileScreenVisible ? (
       <NewProfile />
     ) : (
       <View style={styles.mainContainer}>
         <View style={styles.topContainer}>
-          <Text style={styles.textContainer}>{dataProfile.username}</Text>
+          <Text style={styles.textContainer}>{userProfileInfo.username}</Text>
         </View>
         <View style={styles.bottomContainer}>
           <View style={styles.viewStyle}>
             <ScrollView>
               <CustomInfoUserContent
                 title="Name"
-                information={`${dataProfile.name} ${dataProfile.lastname}`}
+                information={`${userProfileInfo.name} ${userProfileInfo.lastname}`}
               />
 
               <CustomInfoUserContent
                 title="Age"
-                information={dataProfile.age}
+                information={userProfileInfo.age}
               />
 
               <CustomInfoUserContent
                 title="Dog Name"
-                information={dataProfile.dogname}
+                information={userProfileInfo.dogname}
               />
 
               <CustomInfoUserContent
                 title="Breed"
-                information={dataProfile.breed}
+                information={userProfileInfo.breed}
               />
 
               <CustomInfoUserContent
                 title="Dog Age"
-                information={dataProfile.dogage}
+                information={userProfileInfo.dogage}
               />
 
               <CustomInfoUserContent title="Description" />

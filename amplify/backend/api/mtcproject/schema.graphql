@@ -9,5 +9,6 @@ type UserData @model @auth(rules: [{allow: private}]) {
   dogage: Int
   description: String
   clientId: ID
+  isAdmin: Boolean
 }
  

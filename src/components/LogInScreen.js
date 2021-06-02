@@ -14,7 +14,8 @@ import { CustomLargeButton } from '../components/common/CustomLargeButton';
 import { RegisterScreen } from '../components/RegisterScreen';
 import { LoadingScreen } from '../components/LoadingScreen/LoadingScreen';
 import { showRegisterScreenChanged, userDataLoaded } from '../actions';
-import { Auth } from 'aws-amplify';
+import { Auth, DataStore } from 'aws-amplify';
+import { UserData } from '../models';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -108,7 +109,16 @@ const LogInScreen = ({ navigation }) => {
     try {
       const userInfo = await Auth.signIn(userName, password);
       dispatch(userDataLoaded({ userInfo }));
-      navigation.navigate('Home');
+
+      const profile = await DataStore.query(UserData, data =>
+        data.isAdmin('eq', true),
+      );
+
+      if (!profile.length) {
+        navigation.navigate('Home');
+      } else {
+        navigation.navigate('HomeAdmin');
+      }
     } catch (error) {
       console.log('error sign up:', error.message);
     }
@@ -150,7 +160,7 @@ const LogInScreen = ({ navigation }) => {
           <CustomLargeButton actionPress={onPressButton} textButton="Sign in" />
 
           <View style={styles.bottomStyleContainers}>
-            <TouchableOpacity style={styles.linkText} onPress={() => {}}>
+            <TouchableOpacity style={styles.linkText} onPress={() => { }}>
               <Text style={styles.blueText}>Forgot your password?</Text>
             </TouchableOpacity>
 

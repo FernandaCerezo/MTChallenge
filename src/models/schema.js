@@ -72,6 +72,13 @@ export const schema = {
                     "type": "ID",
                     "isRequired": false,
                     "attributes": []
+                },
+                "isAdmin": {
+                    "name": "isAdmin",
+                    "isArray": false,
+                    "type": "Boolean",
+                    "isRequired": false,
+                    "attributes": []
                 }
             },
             "syncable": true,
@@ -102,5 +109,5 @@ export const schema = {
     },
     "enums": {},
     "nonModels": {},
-    "version": "c6922658a44bfca10fe27c596096c741"
+    "version": "c4e6d3a6659d7d200e4458ef3593dd19"
 };
