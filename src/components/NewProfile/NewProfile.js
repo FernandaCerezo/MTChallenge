@@ -43,17 +43,20 @@ const styles = StyleSheet.create({
   },
 });
 
-const NewProfile = () => {
+const NewProfile = ({ route }) => {
   const store = useSelector(state => state);
   const dispatch = useDispatch();
-  const [nameUser, setNameUser] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [userAge, setUserAge] = useState(0);
-  const [dogName, setDogName] = useState('');
-  const [dogAge, setDogAge] = useState(0);
   const { auth } = store;
-  const { allBreeds } = auth;
-  const [breedValue, setSelectedBeed] = useState(allBreeds[0].name);
+  const { allBreeds, selectedUser } = auth;
+  const [nameUser, setNameUser] = useState(selectedUser.name || '');
+  const [lastName, setLastName] = useState(selectedUser.lastname || '');
+  const [userAge, setUserAge] = useState(selectedUser.age.toString() || 0);
+  const [dogName, setDogName] = useState(selectedUser.dogname || '');
+  const [dogAge, setDogAge] = useState(selectedUser.dogage.toString() || 0);
+  const [breedValue, setSelectedBeed] = useState(
+    selectedUser.breed || allBreeds[0].name,
+  );
+  const { isAdmin } = route.params;
 
   const onPressAddProfile = async () => {
     try {
@@ -67,6 +70,7 @@ const NewProfile = () => {
           description: breedValue,
           dogage: parseInt(dogAge, 10),
           dogname: dogName,
+          isAdmin: false,
           lastname: lastName,
           name: nameUser,
           username: auth.userInfo.username,
@@ -74,6 +78,32 @@ const NewProfile = () => {
       );
 
       dispatch({ type: PROFILE_DATA_UPLOADED });
+    } catch (error) {
+      console.log(error);
+      dispatch({ error, type: PROFILE_DATA_FAILED });
+    }
+  };
+
+  const onPressUpdate = async () => {
+    try {
+      dispatch({ type: PROFILE_DATA_ATTEMPT });
+
+      const original = await DataStore.query(UserData, selectedUser.id);
+
+      if (original) {
+        await DataStore.save(
+          UserData.copyOf(original, updated => {
+            updated.age = parseInt(userAge, 10);
+            updated.breed = breedValue;
+            updated.description = breedValue;
+            updated.dogage = parseInt(dogAge, 10);
+            updated.dogname = dogName;
+            updated.lastname = lastName;
+            updated.name = nameUser;
+          }),
+        );
+        dispatch({ type: PROFILE_DATA_UPLOADED });
+      }
     } catch (error) {
       console.log(error);
       dispatch({ error, type: PROFILE_DATA_FAILED });
@@ -127,7 +157,7 @@ const NewProfile = () => {
       </View>
       <View style={styles.buttonContainer}>
         <CustomLargeButton
-          actionPress={onPressAddProfile}
+          actionPress={isAdmin ? onPressUpdate : onPressAddProfile}
           textButton="Send Profile"
         />
       </View>

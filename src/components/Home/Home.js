@@ -181,11 +181,13 @@ const Home = ({ navigation }) => {
             image={smallSize}
             category="Small"
           />
+
           <CustomOptionsCategories
             actionPress={onPressCategory(MEDIUM_PET_HEIGHT)}
             image={mediumSize}
             category="Medium"
           />
+
           <CustomOptionsCategories
             actionPress={onPressCategory(BIG_PET_HEIGHT)}
             image={bigSize}
@@ -195,6 +197,7 @@ const Home = ({ navigation }) => {
       </View>
       <View style={styles.bottomContainer}>
         <Text style={styles.titleSections}>All Dogs</Text>
+
         {pets.isCategoryScreenVisible ? (
           <Categories navigation={navigation} />
         ) : (
@@ -211,7 +214,9 @@ const Home = ({ navigation }) => {
       <View style={styles.menuContainer}>
         <View style={styles.optionsMenuContainer}>
           <CustomMenuItem actionPress={onPressHome} image={home} />
+
           <CustomMenuItem actionPress={onPressProfile} image={profile} />
+
           <CustomMenuItem actionPress={onPressSignOut} image={signOut} />
         </View>
       </View>
